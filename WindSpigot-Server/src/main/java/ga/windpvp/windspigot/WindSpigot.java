@@ -122,7 +122,7 @@ public class WindSpigot {
 
 	private void init() {
 		initCmds();
-		initStatistics();
+		//initStatistics();
 		
 		// We do not want to initialize this again after a reload
 		if (WindSpigotConfig.asyncPathSearches && SearchHandler.getInstance() == null) {
