@@ -15,6 +15,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.minecraft.server.*;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Achievement;
@@ -75,47 +76,7 @@ import ga.windpvp.windspigot.cache.Constants;
 import ga.windpvp.windspigot.config.WindSpigotConfig;
 import io.netty.buffer.Unpooled;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.minecraft.server.AttributeInstance;
-import net.minecraft.server.AttributeMapServer;
-import net.minecraft.server.AttributeModifiable;
-import net.minecraft.server.AttributeRanged;
-import net.minecraft.server.BlockPosition;
-import net.minecraft.server.ChatComponentText;
-import net.minecraft.server.Container;
-import net.minecraft.server.Entity;
-import net.minecraft.server.EntityArrow;
-import net.minecraft.server.EntityHuman;
-import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.EntityProjectile;
-import net.minecraft.server.EntityTracker;
-import net.minecraft.server.EntityTrackerEntry;
-import net.minecraft.server.IAttribute;
-import net.minecraft.server.IChatBaseComponent;
-import net.minecraft.server.MapIcon;
-import net.minecraft.server.MathHelper;
-import net.minecraft.server.MobEffectList;
-import net.minecraft.server.NBTTagCompound;
-import net.minecraft.server.Packet;
-import net.minecraft.server.PacketDataSerializer;
-import net.minecraft.server.PacketPlayOutBlockChange;
-import net.minecraft.server.PacketPlayOutChat;
-import net.minecraft.server.PacketPlayOutCustomPayload;
-import net.minecraft.server.PacketPlayOutGameStateChange;
-import net.minecraft.server.PacketPlayOutMap;
-import net.minecraft.server.PacketPlayOutNamedSoundEffect;
-import net.minecraft.server.PacketPlayOutPlayerInfo;
-import net.minecraft.server.PacketPlayOutPlayerListHeaderFooter;
-import net.minecraft.server.PacketPlayOutSpawnPosition;
-import net.minecraft.server.PacketPlayOutTitle;
 import net.minecraft.server.PacketPlayOutTitle.EnumTitleAction;
-import net.minecraft.server.PacketPlayOutUpdateAttributes;
-import net.minecraft.server.PacketPlayOutUpdateHealth;
-import net.minecraft.server.PacketPlayOutUpdateSign;
-import net.minecraft.server.PacketPlayOutWorldEvent;
-import net.minecraft.server.PacketPlayOutWorldParticles;
-import net.minecraft.server.PlayerConnection;
-import net.minecraft.server.WorldServer;
-import net.minecraft.server.WorldSettings;
 
 @DelegateDeserialization(CraftOfflinePlayer.class)
 public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -1147,6 +1108,14 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
 				if (entityProjectile.shooter instanceof EntityPlayer) {
 					return this.canSee(((EntityPlayer) entityProjectile.shooter).getBukkitEntity());
+				}
+			}
+
+			if (nmsEntity instanceof EntityItem) {
+				EntityItem entityItem = (EntityItem) nmsEntity;
+
+				if (entityItem.owner instanceof EntityPlayer) {
+					return this.canSee(((EntityPlayer) entityItem.owner).getBukkitEntity());
 				}
 			}
 

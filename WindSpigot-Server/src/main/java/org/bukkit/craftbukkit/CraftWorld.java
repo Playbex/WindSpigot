@@ -69,6 +69,7 @@ import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.IronGolem;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LeashHitch;
 import org.bukkit.entity.LightningStrike;
@@ -430,21 +431,41 @@ public class CraftWorld implements World {
 
 	@Override
 	public org.bukkit.entity.Item dropItem(Location loc, ItemStack item) {
+		return this.dropItem(loc, item, null);
+	}
+
+	public org.bukkit.entity.Item dropItem(Location loc, ItemStack item, net.minecraft.server.Entity owner) {
 		Validate.notNull(item, "Cannot drop a Null item.");
 		Validate.isTrue(item.getTypeId() != 0, "Cannot drop AIR.");
 		EntityItem entity = new EntityItem(world, loc.getX(), loc.getY(), loc.getZ(), CraftItemStack.asNMSCopy(item));
 		entity.pickupDelay = 10;
-
-		if (!world.isMainThread()) {
-			world.postToMainThread(() -> world.addEntity(entity));
-		} else {
-			world.addEntity(entity);
-		}
-
+		entity.owner = owner;
+		world.addEntity(entity);
 		// TODO this is inconsistent with how Entity.getBukkitEntity() works.
-		// However, this entity is not at the moment backed by a server entity class so
-		// it may be left.
+		// However, this entity is not at the moment backed by a server entity class so it may be left.
 		return new CraftItem(world.getServer(), entity);
+	}
+
+
+	public org.bukkit.entity.Item dropItemNaturally(Location location, ItemStack item, Player player) {
+		return dropItemNaturally(location, item, ((CraftPlayer) player).getHandle());
+	}
+
+	@Override
+	public Item dropItemNaturally(Location loc, ItemStack item) {
+		return dropItemNaturally(loc, item, (Player) null);
+	}
+
+
+	public Item dropItemNaturally(Location loc, ItemStack item, net.minecraft.server.Entity owner) {
+		double xs = world.random.nextFloat() * 0.7F - 0.35D;
+		double ys = world.random.nextFloat() * 0.7F - 0.35D;
+		double zs = world.random.nextFloat() * 0.7F - 0.35D;
+		loc = loc.clone();
+		// Makes sure the new item is created within the block the location points to.
+		// This prevents item spill in 1-block wide farms.
+		randomLocationWithinBlock(loc, xs, ys, zs);
+		return dropItem(loc, item, owner);
 	}
 
 	private static void randomLocationWithinBlock(Location loc, double xs, double ys, double zs) {
@@ -470,18 +491,6 @@ public class CraftWorld implements World {
 		if (loc.getZ() >= Math.ceil(prevZ)) {
 			loc.setZ(Math.ceil(prevZ - 0.01));
 		}
-	}
-
-	@Override
-	public org.bukkit.entity.Item dropItemNaturally(Location loc, ItemStack item) {
-		double xs = world.random.nextFloat() * 0.7F - 0.35D;
-		double ys = world.random.nextFloat() * 0.7F - 0.35D;
-		double zs = world.random.nextFloat() * 0.7F - 0.35D;
-		loc = loc.clone();
-		// Makes sure the new item is created within the block the location points to.
-		// This prevents item spill in 1-block wide farms.
-		randomLocationWithinBlock(loc, xs, ys, zs);
-		return dropItem(loc, item);
 	}
 
 	@Override

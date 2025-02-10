@@ -25,6 +25,8 @@ public class EntityItem extends Entity implements HopperPusher {
 	public float a;
 	private int lastTick = MinecraftServer.currentTick; // CraftBukkit
 
+	public Entity owner; // Playbex
+
 	public EntityItem(World world, double d0, double d1, double d2) {
 		super(world);
 		this.e = 5;
