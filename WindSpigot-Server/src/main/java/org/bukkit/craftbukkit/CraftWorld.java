@@ -440,7 +440,11 @@ public class CraftWorld implements World {
 		EntityItem entity = new EntityItem(world, loc.getX(), loc.getY(), loc.getZ(), CraftItemStack.asNMSCopy(item));
 		entity.pickupDelay = 10;
 		entity.owner = owner;
-		world.addEntity(entity);
+		if (!world.isMainThread()) {
+			world.postToMainThread(() -> world.addEntity(entity));
+		} else {
+			world.addEntity(entity);
+		}
 		// TODO this is inconsistent with how Entity.getBukkitEntity() works.
 		// However, this entity is not at the moment backed by a server entity class so it may be left.
 		return new CraftItem(world.getServer(), entity);

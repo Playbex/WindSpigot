@@ -602,6 +602,7 @@ public abstract class EntityHuman extends EntityLiving {
 		} else {
 			double d0 = this.locY - 0.30000001192092896D + this.getHeadHeight();
 			EntityItem entityitem = new EntityItem(this.world, this.locX, d0, this.locZ, itemstack);
+			entityitem.owner = this;
 			entityitem.a(40);
 			if (flag1) {
 				entityitem.c(this.getName());
@@ -655,6 +656,7 @@ public abstract class EntityHuman extends EntityLiving {
 			// CraftBukkit end
 
 			this.a(entityitem);
+
 			if (flag1) {
 				this.b(StatisticList.v);
 			}

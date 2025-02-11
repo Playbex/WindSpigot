@@ -1115,7 +1115,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 				EntityItem entityItem = (EntityItem) nmsEntity;
 
 				if (entityItem.owner instanceof EntityPlayer) {
-					return this.canSee(((EntityPlayer) entityItem.owner).getBukkitEntity());
+					Player owner = ((EntityPlayer) entityItem.owner).getBukkitEntity();
+					return this.canSee(owner);
 				}
 			}
 
