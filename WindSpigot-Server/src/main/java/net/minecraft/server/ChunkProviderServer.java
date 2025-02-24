@@ -471,6 +471,10 @@ public class ChunkProviderServer implements IChunkProvider {
 			}
 		}
 
+		if (chunkProvider == null) {
+			return false;
+		}
+
 		return this.chunkProvider.unloadChunks();
 	}
 
